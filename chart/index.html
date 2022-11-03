@@ -1,0 +1,66 @@
+<head>
+  <style> body { margin: 0; } </style>
+  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+</head>
+
+<body>
+  <div id="chart"></div>
+
+</body>
+<script>
+  fetch('/data.json')
+    .then(res => {
+      res.json().then(data => {
+        const packageDeps = data.package;
+        const packageNodesObj = {};
+        const packageEdges = [];
+        packageDeps.forEach(node => {
+          packageNodesObj[node[0]] = 1;
+          packageNodesObj[node[1]] = 1;
+          packageEdges.push({
+            from: node[0],
+            to: node[1],
+            arrows: 'to'
+          });
+        });
+        const packageNodes = Object.keys(packageNodesObj).map(node => ({ id: node, label: node }));
+
+        const allDeps = data.all;
+        const nodesObj = {};
+        const edges = [];
+        Object.keys(allDeps).forEach(f => {
+          nodesObj[f] = 1;
+          allDeps[f].forEach(dep => {
+            nodesObj[dep] = 1;
+            edges.push({
+              from: f,
+              to: dep,
+              arrows: 'to'
+            });
+          });
+        });
+        const nodes = Object.keys(nodesObj).map(node => ({ id: node, label: node }));
+
+        // create a network
+        var container = document.getElementById("chart");
+        var data = {
+          nodes: new vis.DataSet(nodes),
+          edges: new vis.DataSet(edges)
+        };
+        var options = {
+          layout: {
+            hierarchical: {
+              direction: "UD",
+              sortMethod: "directed",
+            },
+          },
+          physics: {
+            hierarchicalRepulsion: {
+              avoidOverlap: 100,
+            },
+          },
+        };
+        var network = new vis.Network(container, data, options);
+      })
+    });
+</script>
