@@ -6,7 +6,7 @@ from typing import List, Dict
 
 ## Update project setup
 root_path = '/Users/pskd73/some/another'
-project = 'service/loan_operator'
+project = 'root/project'
 project_path = os.path.join(root_path, project)
 ignored_packages = [
     'lambda_core', 'pyluca', 'json', 'uuid', 'pandas', 'typing', 'datetime',
